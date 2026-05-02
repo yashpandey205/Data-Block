@@ -1,6 +1,6 @@
 # Lightweight Blockchain Framework for Secure IoT Communication
 
-A production-grade lightweight blockchain prototype designed for resource-constrained IoT environments. Uses **PBFT consensus** for fast finality and **hybrid AES-256 + ECC (secp256k1)** encryption for secure data transmission.
+A production-grade lightweight blockchain prototype designed for resource-constrained IoT environments. Uses **PBFT consensus** for fast finality and **hybrid AES-256 + ECC (secp256k1)** encryption for secure and reliable data transmission.
 
 ---
 
