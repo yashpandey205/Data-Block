@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lightweight Blockchain Dashboard for Secure IoT Communication using PBFT Consensus">
+    <title>IoT Blockchain Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛓</text></svg>">
+</head>
+<body>
+    <div class="app-wrapper">
+
+        <!-- ==================== HEADER ==================== -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">⛓</div>
+                <div class="logo-text">
+                    <h1>IoT Blockchain</h1>
+                    <span>PBFT Consensus · AES + ECC</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="live-badge">
+                    <div class="status-dot"></div>
+                    <span id="headerNodeId">—</span>
+                </div>
+                <select class="node-selector" id="nodeSelector" title="Switch Node">
+                    <option value="5001">Node 1 — :5001</option>
+                    <option value="5002">Node 2 — :5002</option>
+                    <option value="5003">Node 3 — :5003</option>
+                    <option value="5004">Node 4 — :5004</option>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="refreshAll()" title="Refresh">↻ Refresh</button>
+            </div>
+        </header>
+
+        <!-- ==================== MAIN ==================== -->
+        <main class="main-content">
+
+            <!-- ---------- Stats Row ---------- -->
+            <section class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Chain Length</div>
+                    <div class="stat-value" id="statChainLen">—</div>
+                    <div class="stat-sub" id="statNodeId">loading…</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Chain Status</div>
+                    <div class="stat-value" id="statValid">—</div>
+                    <div class="stat-sub">Integrity check</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Txns</div>
+                    <div class="stat-value" id="statPending">—</div>
+                    <div class="stat-sub">Awaiting consensus</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">PBFT Rounds</div>
+                    <div class="stat-value" id="statRounds">—</div>
+                    <div class="stat-sub">Active consensus</div>
+                </div>
+            </section>
+
+            <!-- ---------- Row 1: Chain Explorer + Submit TX ---------- -->
+            <section class="content-grid">
+                <!-- Blockchain Explorer -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><span class="icon">⛓</span> Blockchain Explorer</div>
+                        <button class="btn btn-primary btn-sm" onclick="validateChain()">✔ Validate</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="block-list" id="blockList">
+                            <div class="empty-state"><div class="icon">📦</div>Loading blocks…</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Transaction -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><span class="icon">📡</span> Submit IoT Data</div>
+                        <span class="card-badge badge-info">AES+ECC</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">Sender (Device ID)</label>
+                            <input class="form-input" id="txSender" placeholder="e.g. TempSensor_01" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Receiver</label>
+                            <input class="form-input" id="txReceiver" placeholder="e.g. DataCenter_A" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sensor Data</label>
+                            <textarea class="form-textarea" id="txData" placeholder="e.g. Temperature: 24.5°C, Humidity: 62%"></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="submitTxBtn" onclick="submitTransaction()" style="width:100%;">
+                            🚀 Encrypt &amp; Broadcast
+                        </button>
+
+                        <!-- Decrypt Section -->
+                        <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--border-glass);">
+                            <div class="card-title" style="margin-bottom:14px;"><span class="icon">🔓</span> Decrypt Transaction</div>
+                            <div class="form-group">
+                                <label class="form-label">Encrypted Data</label>
+                                <textarea class="form-textarea" id="decEncData" placeholder="Paste encrypted_data here…"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Encrypted AES Key</label>
+                                <textarea class="form-textarea" id="decEncKey" placeholder="Paste encrypted_aes_key here…"></textarea>
+                            </div>
+                            <button class="btn btn-success" id="decryptBtn" onclick="decryptData()" style="width:100%;">
+                                🔓 Decrypt Data
+                            </button>
+                            <div id="decryptResult"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ---------- Row 2: PBFT Consensus + Network Nodes ---------- -->
+            <section class="content-grid">
+                <!-- PBFT Consensus -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><span class="icon">🗳</span> PBFT Consensus</div>
+                        <span class="card-badge badge-success">Live</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="pbft-phases">
+                            <div class="pbft-phase active">
+                                <div class="phase-icon">📋</div>
+                                <div class="phase-name">Pre-Prepare</div>
+                            </div>
+                            <div class="pbft-phase active">
+                                <div class="phase-icon">✅</div>
+                                <div class="phase-name">Prepare</div>
+                            </div>
+                            <div class="pbft-phase active">
+                                <div class="phase-icon">🔒</div>
+                                <div class="phase-name">Commit</div>
+                            </div>
+                        </div>
+                        <div class="pbft-info">
+                            <div class="pbft-info-item">
+                                <div class="pbft-info-label">Total Nodes</div>
+                                <div class="pbft-info-value" id="pbftNodes">—</div>
+                            </div>
+                            <div class="pbft-info-item">
+                                <div class="pbft-info-label">Fault Tolerance</div>
+                                <div class="pbft-info-value" id="pbftFault">—</div>
+                            </div>
+                            <div class="pbft-info-item">
+                                <div class="pbft-info-label">Prepare Threshold</div>
+                                <div class="pbft-info-value" id="pbftPrepTh">—</div>
+                            </div>
+                            <div class="pbft-info-item">
+                                <div class="pbft-info-label">Commit Threshold</div>
+                                <div class="pbft-info-value" id="pbftCommitTh">—</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px;" id="pbftRounds">
+                            <div class="empty-state"><div class="icon">⏳</div>No active consensus rounds</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Nodes -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><span class="icon">🌐</span> Network Topology</div>
+                        <span class="card-badge badge-info">4 Peers</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="nodes-grid" id="nodesGrid">
+                            <div class="empty-state"><div class="icon">🌐</div>Loading nodes…</div>
+                        </div>
+                        <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border-glass);">
+                            <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Public Key</div>
+                            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-secondary); word-break:break-all; background:var(--bg-glass); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-glass);" id="statPubkey">loading…</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
