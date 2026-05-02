@@ -8,7 +8,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 
-# IDE
+# IDE's
 .vscode/
 .idea/
 *.swp
@@ -19,7 +19,7 @@ __pycache__/
 Thumbs.db
 desktop.ini
 
-# Distribution
+# Distributions
 *.egg-info/
 dist/
 build/
