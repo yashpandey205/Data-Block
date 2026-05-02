@@ -1,11 +1,11 @@
 # app.py
-# ============================================================================
+
 # Lightweight Blockchain Framework — Flask REST API
-# ============================================================================
+
 # Exposes HTTP endpoints for IoT clients and monitoring dashboards to
 # interact with the blockchain network.  Each running instance wraps a
 # single Node object.
-#
+
 # Endpoints:
 #   POST /transactions/new  — Submit IoT sensor data (auto-encrypted).
 #   POST /decrypt            — Decrypt a transaction payload (demo / debug).
@@ -15,7 +15,7 @@
 #   GET  /pubkey             — This node's ECC public key.
 #   GET  /nodes              — Registered network peers.
 #   GET  /validate           — Run full chain integrity validation.
-# ============================================================================
+
 
 from flask import Flask, jsonify, request, render_template
 import argparse
